@@ -1,9 +1,10 @@
 {
   "name": "nodejs_solution",
   "version": "1.0.0",
-  "description": "",
+  "description": "The purpose of this project is to",
   "main": "CountryListAPI.js",
   "scripts": {
+    "start" : "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -12,5 +13,17 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1"
-  }
+  },
+  "engines" : {
+    "node": "12.16.3"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ScottReisdorf92/Country-List-Project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ScottReisdorf92/Country-List-Project/issues"
+  },
+  "homepage": "https://github.com/ScottReisdorf92/Country-List-Project#readme"
 }
