@@ -124,10 +124,8 @@ app.get('/:code', function(req, res) {
   if(!codeList.includes(countryCode)) {
     res.setHeader('Content-Type', 'text/plain');
     res.end(`${countryCode} is an invalid country code, please select from the following list of country codes: ${codeList}`);
-  }
-
-  // check if path from USA to given country code has been cached
-  if (pathCache.has(countryCode)) {
+  } else if (pathCache.has(countryCode)) {
+    // check if path from USA to given country code has been cached
     console.log(`Found ${countryCode} in cache, returning path`);
     res.setHeader('Content-Type', 'text/plain');
     res.send(pathCache.get(countryCode).toString());
@@ -138,6 +136,16 @@ app.get('/:code', function(req, res) {
     pathCache.set(countryCode, path);
     res.setHeader('Content-Type', 'text/plain');
     res.end(path.toString());
+  }
+});
+
+app.get('/*', function(req, res) {
+  var countryCode = req.params['code'].toUpperCase();
+
+  // check if valid code is input
+  if(!codeList.includes(countryCode)) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.end(`${countryCode} is an invalid country code, please select from the following list of country codes: ${codeList}`);
   }
 });
 
