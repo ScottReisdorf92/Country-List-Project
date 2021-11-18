@@ -106,8 +106,8 @@ costaRica.adjacent.push(panama);
 panama.adjacent.push(costaRica);
 
 
-// server listens on port 9051 for incoming connections
-app.listen(process.env.PORT || port, () => console.log('Listening on port 9051!'));
+// server listens on port 9051 for incoming connections locally, otherwise uses herokus port
+app.listen(process.env.PORT || port, () => console.log('Listening!!'));
 
 // ENDPOINTS
 app.get('/', function(req, res) {
@@ -117,7 +117,7 @@ app.get('/', function(req, res) {
 });
 
 
-app.get('/:code', function(req, res) {
+app.get('/:code/', function(req, res) {
   var countryCode = req.params['code'].toUpperCase();
 
   // check if valid code is input
@@ -127,28 +127,31 @@ app.get('/:code', function(req, res) {
   } else if (pathCache.has(countryCode)) {
     // check if path from USA to given country code has been cached
     console.log(`Found ${countryCode} in cache, returning path`);
-    res.setHeader('Content-Type', 'text/plain');
-    res.send(pathCache.get(countryCode).toString());
+    destination = {
+      'destination': countryCode,
+      'shortestPath': pathCache.get(countryCode)
+    }
+    res.setHeader('Content-Type', 'application/json');
+    res.send(destination);
   } else {
     // else find the path from USA to the given country code and add it to the cache
     var path = findPath(unitedStates, countryCode);
     console.log('Sending Path: ' + path);
     pathCache.set(countryCode, path);
-    res.setHeader('Content-Type', 'text/plain');
-    res.end(path.toString());
+    destination = {
+      'destination': countryCode,
+      'shortestPath': path
+    }
+    res.setHeader('Content-Type', 'application/json');
+    res.send(destination);
   }
 });
 
-app.get('/*', function(req, res) {
-  var countryCode = req.params['code'].toUpperCase();
+app.get('/*/*', function(req, res) {
 
-  // check if valid code is input
-  if(!codeList.includes(countryCode)) {
-    res.setHeader('Content-Type', 'text/plain');
-    res.end(`${countryCode} is an invalid country code, please select from the following list of country codes: ${codeList}`);
-  }
+  res.setHeader('Content-Type', 'text/plain');
+  res.end(`invalid endpoint reached, please try again with valid format, i.e. url/BLZ`);
 });
-
 
 /**
  * HELPER METHOD
@@ -165,6 +168,7 @@ app.get('/*', function(req, res) {
  *          from the source country to the destination country
 */
 function findPath(rootCountry, countryCode) {
+  console.log('STARTING path search for ' + countryCode);
   var queue = [rootCountry];
   var visited = [];
   var paths = new Map();
